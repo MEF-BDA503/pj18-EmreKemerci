@@ -1,0 +1,46 @@
+---
+title: "Assignment 1"
+author: "Emre Kemerci"
+date: "October 13, 2018"
+output: html_document
+---
+# Intro
+
+I am working in Enerjisa Üretim Santralleri as an auditor. In electricity sector data science is important since it ensures predictive analytics capabilities to entities. For the retail business (demand side), entities should forecast daily and hourly electricity demand of their customers to commit at buy side, while power generation entities should plan dispatch of their assets for generation with optimum cost and offer for electricity sale price. All these forecasting and optimization problems with numerous variables and frequency, data science brings competitive advantage for the entities.
+
+## From UseR Conference - Using R to help industry clients – The benefits and Opportunities
+
+I wanted to watch this video to have an insight why R is prefered for data analytic needs. The speaker, Lisa  Chen introduced in which sectors Harmonic Analytics work and  how the data analytic needs are growing. With more than 5000 packages, how can R satisfy expectations of employees in different level of organisations like executives, managers or data scientics. Through this way, she list the opportunities that R served. [Here](https://www.youtube.com/watch?v=ffpH3dMb0nE) is the link for her UseR speech.
+
+## From R Bloggers  - Monitoring electricity use by mikerspencer
+
+Writer wants to decide whether installing PV sonar panels to their home and for this aim, they need to monitor and summarize their electricity usage. After installing required hardware to measure electricity use, they record these consumption data in every 10 seconds. Using dplyr and ggplot packages, writer creates two plots summarizing daily and hourly electricity use. It looks like their hourly electricity usage peaks early morning and evening hours which PV sonar panels can not work with max capacity and their daiy use generally between 10 to 15 kWh with max of 20 kWh showing how many sonar panels they need to optimize electricity cost.
+
+[Link](https://www.r-bloggers.com/monitoring-electricity-use/)
+
+
+## From R Bloggers - Modeling Residential Electricity Usage with R – Part 1 & 2
+
+In this blog posts, writer is trying to forecast electricity usage and in the first part, day of the week, time of the year and the passage of time is used as variables and either statistical results and plot shows that the predictive accuracy is low. To increase accuracy, temperature data is also added to analysis. In the second part, writer is modelling electricty usage with high temperature of the day and concluding that it is possible to  model residential power usage pretty accurately to first order based on knowledge of the high temperature for the day as well as the time of the year, the day of the week and the hour of the day.   
+
+[Part 1](https://www.r-bloggers.com/modeling-residential-electricity-usage-with-r/)
+
+[Part 2](https://www.r-bloggers.com/modeling-residential-electricity-usage-with-r-part-2/)
+
+
+
+
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+```
+
