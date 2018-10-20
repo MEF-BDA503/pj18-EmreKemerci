@@ -3,3 +3,35 @@ title: "Week2 Assignment"
 output: html_document
 ---
 
+
+#I started with downloading ODD May 2018 Retail Sales Data from its [website](http://www.odd.org.tr/web_2837_1/neuralnetwork.aspx?type=36)
+#Then I put this data to my github repository, changing its name to 'odd_retail_sales_2018_05.xlsx'
+
+#First I installed and loaded the readxl package
+```{r}
+#install.packages("readxl")
+```
+
+```{r}
+#library(readxl)
+```
+
+# Create a temporary file
+
+```{r}
+tmp<-tempfile(fileext=".xlsx")
+```
+# Download file from repository to the temp file
+```{r}
+download.file("https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true",destfile=tmp)
+```
+# Read that excel file using readxl package's read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file's format.
+```{r}
+raw_data<-readxl::read_excel(tmp,skip=7,col_names=FALSE)
+```
+
+# Remove the temp file
+
+```{r}
+file.remove(tmp)
+```

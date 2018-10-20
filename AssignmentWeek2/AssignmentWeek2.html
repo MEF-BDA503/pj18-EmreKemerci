@@ -310,7 +310,11 @@ $(document).ready(function () {
 </div>
 
 
-
+<div id="create-a-temporary-file" class="section level1">
+<h1>Create a temporary file</h1>
+<p>tmp&lt;-tempfile(fileext=“.xlsx”) # Download file from repository to the temp file download.file(“<a href="https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true" class="uri">https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true</a>”,destfile=tmp) # Read that excel file using readxl package’s read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file’s format.</p>
+<p>raw_data&lt;-readxl::read_excel(tmp,skip=7,col_names=FALSE) # Remove the temp file file.remove(tmp)</p>
+</div>
 
 
 
