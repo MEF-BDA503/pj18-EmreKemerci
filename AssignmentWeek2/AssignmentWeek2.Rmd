@@ -1,5 +1,7 @@
 ---
 title: "Week2 Assignment"
+author: "Emre Kemerci"
+date: "October 20, 2018"
 output: html_document
 ---
 
