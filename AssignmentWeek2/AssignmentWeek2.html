@@ -310,10 +310,214 @@ $(document).ready(function () {
 </div>
 
 
-<div id="create-a-temporary-file" class="section level1">
-<h1>Create a temporary file</h1>
-<p>tmp&lt;-tempfile(fileext=“.xlsx”) # Download file from repository to the temp file download.file(“<a href="https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true" class="uri">https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true</a>”,destfile=tmp) # Read that excel file using readxl package’s read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file’s format.</p>
-<p>raw_data&lt;-readxl::read_excel(tmp,skip=7,col_names=FALSE) # Remove the temp file file.remove(tmp)</p>
+<div id="preparation" class="section level2">
+<h2>Preparation</h2>
+<p>I started with downloading ODD May 2018 Retail Sales Data from its <a href="http://www.odd.org.tr/web_2837_1/neuralnetwork.aspx?type=36">website</a> Then I put this data to my github repository, changing its name to <em>odd_retail_sales_2018_05.xlsx</em></p>
+<p>First I installed and loaded the readxl &amp; tidyverse package</p>
+<pre class="r"><code>#install.packages(&quot;readxl&quot;)
+#install.packages(&quot;tidyverse&quot;)</code></pre>
+<pre class="r"><code>library(readxl)
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages ---------------------------------- tidyverse 1.2.1 --</code></pre>
+<pre><code>## &lt;U+221A&gt; ggplot2 3.0.0     &lt;U+221A&gt; purrr   0.2.5
+## &lt;U+221A&gt; tibble  1.4.2     &lt;U+221A&gt; dplyr   0.7.7
+## &lt;U+221A&gt; tidyr   0.8.1     &lt;U+221A&gt; stringr 1.3.1
+## &lt;U+221A&gt; readr   1.1.1     &lt;U+221A&gt; forcats 0.3.0</code></pre>
+<pre><code>## -- Conflicts ------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div id="download-data" class="section level2">
+<h2>Download Data</h2>
+<p>Create a temporary file</p>
+<pre class="r"><code>tmp&lt;-tempfile(fileext=&quot;.xlsx&quot;)</code></pre>
+<p>Download file from repository to the temp file</p>
+<pre class="r"><code>download.file(&quot;https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true&quot;,mode = 'wb',destfile=tmp)</code></pre>
+<p>Read that excel file using readxl package’s read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file’s format.</p>
+<pre class="r"><code>raw_data&lt;-readxl::read_excel(tmp,skip=7,col_names=FALSE)</code></pre>
+<p><em>When I first run readxl function, it gave me error – Evaluation error: error -103 with zipfile in unzGetCurrentFileInfo then I insert mode=‘wb’ to download.file function</em></p>
+<p>Remove the temp file</p>
+<pre class="r"><code>file.remove(tmp)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>I checked head and tail of my data</p>
+<pre class="r"><code>head(raw_data)</code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   X__1          X__2  X__3  X__4  X__5  X__6  X__7  X__8  X__9 X__10
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 ALFA ROMEO      NA    25    25    NA    NA     0     0    25    25
+## 2 ASTON MARTIN    NA     1     1    NA    NA     0     0     1     1
+## 3 AUDI            NA  1630  1630    NA    NA     0     0  1630  1630
+## 4 BENTLEY         NA     1     1    NA    NA     0     0     1     1
+## 5 BMW             NA  1910  1910    NA    NA     0     0  1910  1910
+## 6 CITROEN         NA   980   980    NA   634   634     0  1614  1614</code></pre>
+<pre class="r"><code>tail(raw_data)</code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   X__1        X__2  X__3  X__4  X__5  X__6  X__7  X__8  X__9 X__10
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 SUZUKI        NA   383   383    NA    NA     0     0   383   383
+## 2 TOYOTA      2438   370  2808    NA   352   352  2438   722  3160
+## 3 VOLKSWAGEN    NA  5913  5913    NA  1931  1931     0  7844  7844
+## 4 VOLVO         NA   590   590    NA    NA     0     0   590   590
+## 5 &lt;NA&gt;          NA    NA    NA    NA    NA    NA    NA    NA    NA
+## 6 TOPLAM:    19008 38219 57227  8230  7298 15528 27238 45517 72755</code></pre>
+<p>Since the last 2 rows are blank and total, I removed these rows</p>
+<pre class="r"><code>raw_data &lt;- raw_data %&gt;% slice(-c(43,44))</code></pre>
+<pre><code>## Warning: package 'bindrcpp' was built under R version 3.4.4</code></pre>
+<pre class="r"><code>tail(raw_data)</code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   X__1        X__2  X__3  X__4  X__5  X__6  X__7  X__8  X__9 X__10
+##   &lt;chr&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 SSANGYONG     NA    19    19    NA    12    12     0    31    31
+## 2 SUBARU        NA   144   144    NA    NA     0     0   144   144
+## 3 SUZUKI        NA   383   383    NA    NA     0     0   383   383
+## 4 TOYOTA      2438   370  2808    NA   352   352  2438   722  3160
+## 5 VOLKSWAGEN    NA  5913  5913    NA  1931  1931     0  7844  7844
+## 6 VOLVO         NA   590   590    NA    NA     0     0   590   590</code></pre>
+<pre class="r"><code>head(raw_data) </code></pre>
+<pre><code>## # A tibble: 6 x 10
+##   X__1          X__2  X__3  X__4  X__5  X__6  X__7  X__8  X__9 X__10
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 ALFA ROMEO      NA    25    25    NA    NA     0     0    25    25
+## 2 ASTON MARTIN    NA     1     1    NA    NA     0     0     1     1
+## 3 AUDI            NA  1630  1630    NA    NA     0     0  1630  1630
+## 4 BENTLEY         NA     1     1    NA    NA     0     0     1     1
+## 5 BMW             NA  1910  1910    NA    NA     0     0  1910  1910
+## 6 CITROEN         NA   980   980    NA   634   634     0  1614  1614</code></pre>
+</div>
+<div id="make-data-civilized" class="section level2">
+<h2>Make Data Civilized</h2>
+<p>Define column names</p>
+<pre class="r"><code>colnames(raw_data) &lt;- c(&quot;brand_name&quot;,&quot;auto_dom&quot;,&quot;auto_imp&quot;,&quot;auto_total&quot;,&quot;comm_dom&quot;,&quot;comm_imp&quot;,&quot;comm_total&quot;,&quot;total_dom&quot;,&quot;total_imp&quot;,&quot;total_total&quot;)</code></pre>
+<p>and remove NA values with 0 and label the time period with year and month in order to prevent confusion when we merge data ( <code>mutate()</code> adds new variables and preserves existing; <code>transmute()</code> drops existing variables )</p>
+<pre class="r"><code>car_data_may_18 &lt;- raw_data %&gt;% mutate_if(is.numeric,funs(ifelse(is.na(.),0,.))) %&gt;% mutate(year=2018,month=5)
+
+print(car_data_may_18,width=Inf)</code></pre>
+<pre><code>## # A tibble: 42 x 12
+##    brand_name   auto_dom auto_imp auto_total comm_dom comm_imp comm_total
+##    &lt;chr&gt;           &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;
+##  1 ALFA ROMEO          0       25         25        0        0          0
+##  2 ASTON MARTIN        0        1          1        0        0          0
+##  3 AUDI                0     1630       1630        0        0          0
+##  4 BENTLEY             0        1          1        0        0          0
+##  5 BMW                 0     1910       1910        0        0          0
+##  6 CITROEN             0      980        980        0      634        634
+##  7 DACIA               0     3193       3193        0      328        328
+##  8 DS                  0        9          9        0        0          0
+##  9 FERRARI             0        1          1        0        0          0
+## 10 FIAT             5309      178       5487     2731      362       3093
+##    total_dom total_imp total_total  year month
+##        &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1         0        25          25  2018     5
+##  2         0         1           1  2018     5
+##  3         0      1630        1630  2018     5
+##  4         0         1           1  2018     5
+##  5         0      1910        1910  2018     5
+##  6         0      1614        1614  2018     5
+##  7         0      3521        3521  2018     5
+##  8         0         9           9  2018     5
+##  9         0         1           1  2018     5
+## 10      8040       540        8580  2018     5
+## # ... with 32 more rows</code></pre>
+</div>
+<div id="saving-civilized-data" class="section level2">
+<h2>Saving Civilized Data</h2>
+<p>One of the best methods is to save your data to an RDS or RData file. The difference is RDS can hold only one object but RData can hold many. Since we have only one data frame here we will go with RDS.</p>
+<p>You can read that file by readRDS and assigning to an object <code>rds_data &lt;- readRDS(&quot;~/YOUR_OWN_PATH/odd_car_sales_data_sep_18.rds&quot;)</code></p>
+<pre class="r"><code>saveRDS(car_data_may_18,file=&quot;data_may_18.rds&quot;)</code></pre>
+</div>
+<div id="time-to-make-some-analysis" class="section level2">
+<h2>Time to make some analysis</h2>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,auto_dom) %&gt;% 
+  arrange(desc(auto_dom)) %&gt;% 
+  filter(auto_dom&gt;0)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   brand_name auto_dom
+##   &lt;chr&gt;         &lt;dbl&gt;
+## 1 RENAULT        6586
+## 2 FIAT           5309
+## 3 TOYOTA         2438
+## 4 HYUNDAI        2142
+## 5 HONDA          2132
+## 6 FORD            401</code></pre>
+<p>There are only 6 auto brands domesticly produced, check also commercial ones</p>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,comm_dom) %&gt;% 
+  arrange(desc(comm_dom)) %&gt;% 
+  filter(comm_dom&gt;0)</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   brand_name comm_dom
+##   &lt;chr&gt;         &lt;dbl&gt;
+## 1 FORD           5136
+## 2 FIAT           2731
+## 3 ISUZU           265
+## 4 KARSAN           76
+## 5 MITSUBISHI       22</code></pre>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,auto_dom,comm_dom) %&gt;% 
+  arrange(desc(auto_dom)) %&gt;% 
+  filter(comm_dom&gt;0) %&gt;% filter(auto_dom&gt;0)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   brand_name auto_dom comm_dom
+##   &lt;chr&gt;         &lt;dbl&gt;    &lt;dbl&gt;
+## 1 FIAT           5309     2731
+## 2 FORD            401     5136</code></pre>
+<p>Only Ford &amp; Fiat are the domestic producers of both auto &amp; commercial vehicle. What about imports?</p>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,auto_imp,comm_imp) %&gt;% 
+  arrange(desc(auto_imp)) %&gt;% 
+  filter(comm_imp&gt;0) %&gt;% filter(auto_imp&gt;0)</code></pre>
+<pre><code>## # A tibble: 14 x 3
+##    brand_name    auto_imp comm_imp
+##    &lt;chr&gt;            &lt;dbl&gt;    &lt;dbl&gt;
+##  1 VOLKSWAGEN        5913     1931
+##  2 PEUGEOT           3819      404
+##  3 DACIA             3193      328
+##  4 FORD              2803      216
+##  5 RENAULT           2694      969
+##  6 NISSAN            2508      116
+##  7 HYUNDAI           2463      199
+##  8 MERCEDES-BENZ     2153     1204
+##  9 CITROEN            980      634
+## 10 KIA                742      221
+## 11 TOYOTA             370      352
+## 12 FIAT               178      362
+## 13 MITSUBISHI          57      184
+## 14 SSANGYONG           19       12</code></pre>
+<p>I want to see if there is any brand which has sales value both in domestic and import columns.</p>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,total_dom,total_imp) %&gt;% 
+   
+  filter(total_dom&gt;0) %&gt;% filter(total_imp&gt;0)</code></pre>
+<pre><code>## # A tibble: 8 x 3
+##   brand_name total_dom total_imp
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;
+## 1 FIAT            8040       540
+## 2 FORD            5537      3019
+## 3 HONDA           2132       588
+## 4 HYUNDAI         2142      2662
+## 5 ISUZU            265        33
+## 6 MITSUBISHI        22       241
+## 7 RENAULT         6586      3663
+## 8 TOYOTA          2438       722</code></pre>
+<p>8 brands have both sales from domestic production and import,</p>
+<p>Which brand’s import sale has the highest portion from its total sales?</p>
+<pre class="r"><code>car_data_may_18 %&gt;% 
+  select(brand_name,total_dom,total_imp) %&gt;% 
+   
+  filter(total_dom&gt;0) %&gt;% filter(total_imp&gt;0) %&gt;% 
+  mutate(percentage=total_imp/(total_dom+total_imp)) %&gt;% arrange(desc(percentage)) </code></pre>
+<pre><code>## # A tibble: 8 x 4
+##   brand_name total_dom total_imp percentage
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+## 1 MITSUBISHI        22       241     0.916 
+## 2 HYUNDAI         2142      2662     0.554 
+## 3 RENAULT         6586      3663     0.357 
+## 4 FORD            5537      3019     0.353 
+## 5 TOYOTA          2438       722     0.228 
+## 6 HONDA           2132       588     0.216 
+## 7 ISUZU            265        33     0.111 
+## 8 FIAT            8040       540     0.0629</code></pre>
 </div>
 
 

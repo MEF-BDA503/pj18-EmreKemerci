@@ -3,35 +3,148 @@ title: "Week2 Assignment"
 output: html_document
 ---
 
+## Preparation
+I started with downloading ODD May 2018 Retail Sales Data from its [website](http://www.odd.org.tr/web_2837_1/neuralnetwork.aspx?type=36)
+Then I put this data to my github repository, changing its name to *odd_retail_sales_2018_05.xlsx*
 
-#I started with downloading ODD May 2018 Retail Sales Data from its [website](http://www.odd.org.tr/web_2837_1/neuralnetwork.aspx?type=36)
-#Then I put this data to my github repository, changing its name to 'odd_retail_sales_2018_05.xlsx'
-
-#First I installed and loaded the readxl package
-```{r}
+First I installed and loaded the readxl & tidyverse package
+```{r,warning=FALSE}
 #install.packages("readxl")
+#install.packages("tidyverse")
 ```
 
-```{r}
-#library(readxl)
+```{r, warning=FALSE}
+library(readxl)
+library(tidyverse)
 ```
 
-# Create a temporary file
+## Download Data
+Create a temporary file
 
 ```{r}
 tmp<-tempfile(fileext=".xlsx")
 ```
-# Download file from repository to the temp file
-```{r}
-download.file("https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true",destfile=tmp)
+
+Download file from repository to the temp file
+
+```{r, warning=FALSE}
+download.file("https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true",mode = 'wb',destfile=tmp)
 ```
-# Read that excel file using readxl package's read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file's format.
-```{r}
+
+Read that excel file using readxl package's read_excel function. You might need to adjust the parameters (skip, col_names) according to your raw file's format.
+
+```{r, warning=FALSE}
 raw_data<-readxl::read_excel(tmp,skip=7,col_names=FALSE)
 ```
 
-# Remove the temp file
+*When I first run readxl function, it gave me error -- Evaluation error: error -103 with zipfile in unzGetCurrentFileInfo then I insert mode='wb' to download.file function*
 
-```{r}
+Remove the temp file
+
+```{r, warning=FALSE}
 file.remove(tmp)
 ```
+
+I checked head and tail of my data
+
+```{r}
+head(raw_data)
+tail(raw_data)
+```
+
+Since the last 2 rows are blank and total, I removed these rows
+
+```{r}
+
+raw_data <- raw_data %>% slice(-c(43,44))
+
+tail(raw_data)
+head(raw_data) 
+```
+
+## Make Data Civilized
+Define column names
+```{r, warning=FALSE}
+colnames(raw_data) <- c("brand_name","auto_dom","auto_imp","auto_total","comm_dom","comm_imp","comm_total","total_dom","total_imp","total_total")
+```
+
+and remove NA values with 0 and label the time period with year and month in order to prevent confusion when we merge data
+( ``mutate()`` adds new variables and preserves existing; ``transmute()`` drops existing variables )
+
+```{r, warning=FALSE}
+car_data_may_18 <- raw_data %>% mutate_if(is.numeric,funs(ifelse(is.na(.),0,.))) %>% mutate(year=2018,month=5)
+
+print(car_data_may_18,width=Inf)
+```
+
+## Saving Civilized Data
+One of the best methods is to save your data to an RDS or RData file. The difference is RDS can hold only one object but RData can hold many. Since we have only one data frame here we will go with RDS.
+
+You can read that file by readRDS and assigning to an object ``rds_data <- readRDS("~/YOUR_OWN_PATH/odd_car_sales_data_sep_18.rds")``
+
+```{r, warning=FALSE}
+saveRDS(car_data_may_18,file="data_may_18.rds")
+```
+
+## Time to make some analysis
+
+```{r,warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,auto_dom) %>% 
+  arrange(desc(auto_dom)) %>% 
+  filter(auto_dom>0)
+
+
+```
+There are only 6 auto brands domesticly produced, check also commercial ones
+
+```{r, warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,comm_dom) %>% 
+  arrange(desc(comm_dom)) %>% 
+  filter(comm_dom>0)
+```
+
+```{r, warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,auto_dom,comm_dom) %>% 
+  arrange(desc(auto_dom)) %>% 
+  filter(comm_dom>0) %>% filter(auto_dom>0)
+```
+Only Ford & Fiat are the domestic producers of both auto & commercial vehicle. What about imports?
+
+```{r, warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,auto_imp,comm_imp) %>% 
+  arrange(desc(auto_imp)) %>% 
+  filter(comm_imp>0) %>% filter(auto_imp>0)
+```
+
+
+I want to see if there is any brand which has sales value both in domestic and import columns.
+
+```{r, warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,total_dom,total_imp) %>% 
+   
+  filter(total_dom>0) %>% filter(total_imp>0)
+```
+
+8 brands have both sales from domestic production and import, 
+
+Which brand's import sale has the highest portion from its total sales?
+
+```{r, warning=FALSE}
+car_data_may_18 %>% 
+  select(brand_name,total_dom,total_imp) %>% 
+   
+  filter(total_dom>0) %>% filter(total_imp>0) %>% 
+  mutate(percentage=total_imp/(total_dom+total_imp)) %>% arrange(desc(percentage)) 
+  
+```
+
+
+
+
+
+
