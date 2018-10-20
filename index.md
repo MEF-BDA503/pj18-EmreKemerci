@@ -1,6 +1,6 @@
 ***
 ## Week2
-This week's assignment we download data from ODD website and read it with ``readxl`` function, civilized the data and make some analysis on the data. 
+This week's assignment we download data from ODD website and read it with *readxl* function, civilized the data and make some analysis on the data. 
 [Assignment](AssignmentWeek2/AssignmentWeek2.html)
 
 ***
