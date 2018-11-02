@@ -1,7 +1,9 @@
-[Homepage](https://emrekemerci.github.io/EmreKemerci/)
+## [Homepage](https://emrekemerci.github.io/EmreKemerci/)
+
 ***
 ## Week3 (Oct 31, 2018)
 ...
+
 ***
 ## Week2 (Oct 17, 2018)
 In this week's assignment, we downloaded data from ODD website and read it with *readxl* function, civilized the data and made some analysis on the data. 
