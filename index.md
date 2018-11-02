@@ -1,4 +1,4 @@
-## [Homepage](https://emrekemerci.github.io/EmreKemerci/)
+#### [Homepage](https://emrekemerci.github.io/EmreKemerci/)
 
 ***
 ## Week3 (Oct 31, 2018)
