@@ -4,28 +4,34 @@ author: "Emre Kemerci"
 date: "November 2, 2018"
 output: html_document
 ---
+## Info
+This week, we are continuing on last weeks' assignment and merging data  
 
-## Load tidyverse
+
+```{r, warning=FALSE}
 library(tidyverse)
-# Create a tibble (a data frame)
+```
+
+
+Create a tibble (a data frame)
+
+```{r, warning=FALSE}
 main_data <- tibble()
-# Create a temporary rds file
+```
+
+Create a temporary rds file
+
+```{r, warning=FALSE}
 tmprds <- tempfile(fileext=".rds")
+```
 
-# Download 2018-09 data and add to main data
-print("Getting 2018-09 data from repository")
-download.file("https://github.com/MEF-BDA503/mef-bda503.github.io/blob/master/files/car_data_sep_18.rds?raw=true",destfile=tmprds)
+Download 2018-05 data and add to main data
+
+```{r, warning=FALSE}
+print("Getting 2018-05 data from repository")
+download.file("https://github.com/MEF-BDA503/pj18-EmreKemerci/blob/master/AssignmentWeek2/odd_retail_sales_2018_05.xlsx?raw=true", destfile=tmprds, mode ='wb')
 main_data <- bind_rows(main_data,readRDS(tmprds))
-
-# Download 2017-03 data and add to main data
-print("Getting 2017-03 data from repository")
-download.file("https://github.com/MEF-BDA503/pj18-oktayekici/blob/master/odd_car_sales_data_mar_17.rds?raw=true",destfile=tmprds)
-main_data <- bind_rows(main_data,readRDS(tmprds))
-
-# Download 2018-07 data and add to main data
-### YOUR WORK HERE
-
-# Download 2018-07 data and add to main data
+```
 
 
 # Save the final merged RDS file

@@ -1,5 +1,4 @@
-#### [Homepage](https://emrekemerci.github.io/EmreKemerci/)
-
+#### [Personal Homepage](https://emrekemerci.github.io/EmreKemerci/)	[Course Instructor Homepage](https://mef-bda503.github.io/)	
 ***
 ## Week3 (Oct 31, 2018)
 ...
