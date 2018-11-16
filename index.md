@@ -1,8 +1,11 @@
 ##### [Homepage](https://emrekemerci.github.io/EmreKemerci/)			
 ##### [Course Homepage](https://mef-bda503.github.io/)	
+## Week4 (Nov 14, 2018)
+Shiny package was exercised this week.  
+
 ***
 ## Week3 (Oct 31, 2018)
-...
+This week we reviewed ggplot & lubridate packages and as ODD homework part 2, in order to aggregate monthly ODD datas, we merged our code to main file. 
 
 ***
 ## Week2 (Oct 17, 2018)
