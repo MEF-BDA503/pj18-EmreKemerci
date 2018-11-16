@@ -1,7 +1,7 @@
 ##### [Homepage](https://emrekemerci.github.io/EmreKemerci/)			
 ##### [Course Homepage](https://mef-bda503.github.io/)	
 ## Week4 (Nov 14, 2018)
-Shiny package was exercised this week.  
+Shiny package was exercised this week. Besides, we gave a start to our group term project   
 
 ***
 ## Week3 (Oct 31, 2018)
