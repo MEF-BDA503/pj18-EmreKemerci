@@ -1,0 +1,35 @@
+---
+title: "Week4 Assignment"
+author: "Emre Kemerci"
+date: "November 20, 2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r, warning=FALSE}
+data<-readRDS(file = "C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/AssignmentWeek4/car_data_aggregate.rds")
+
+```
+
+first, take a glance at variables
+
+```{r}
+data %>% str()
+
+UniqueBrandNames<-data %>% distinct(brand_name)
+UniqueYear<-data %>% distinct(year)
+UniqueMonth<-data %>% distinct(month)
+list(c(UniqueBrandNames,UniqueMonth, UniqueYear))
+```
+
+Month and Year variables have appropriate values but brand_names variable needs cleaning since there are "TOPLAM:" and "ODD, verilerinde..." values. Also, brand_name has values "Aston MARTİN and Aston MARTIN". 
+
+```{r, warning=FALSE}
+
+data %>% filter(brand_name=="TOPLAM:" | brand_name=="*.yer alan.*")
+```
+
