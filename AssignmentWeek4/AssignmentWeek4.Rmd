@@ -26,10 +26,45 @@ UniqueMonth<-data %>% distinct(month)
 list(c(UniqueBrandNames,UniqueMonth, UniqueYear))
 ```
 
-Month and Year variables have appropriate values but brand_names variable needs cleaning since there are "TOPLAM:" and "ODD, verilerinde..." values. Also, brand_name has values "Aston MARTÄ°N and Aston MARTIN". 
+Month and Year variables have appropriate values but brand_names variable needs cleaning since there are "TOPLAM:" and "ODD, verilerinde..." values. Also, brand_name has values "Aston MARTÝN and Aston MARTIN", we can replace "Aston MARTÝN"" with "Aston MARTIN". 
 
 ```{r, warning=FALSE}
 
-data %>% filter(brand_name=="TOPLAM:" | brand_name=="*.yer alan.*")
+data <- data %>% filter(!grepl("ODD", brand_name) & brand_name!="TOPLAM:")
+
+data <- data %>%
+  mutate(brand_name=replace(brand_name,brand_name=="ASTON MARTÝN","ASTON MARTIN"))
+
+
+```
+
+I want to analyse market shares of each brand for auto sales, commercial vehicle sales and total sales.
+
+```{r}
+market_shares <- data %>%
+  group_by(brand_name) %>%
+  summarize(auto_grand_total=sum(auto_total), comm_grand_total=sum(comm_total), total_grand_total=sum(total_total)) %>%
+  mutate(auto_market_share=round((auto_grand_total/sum(auto_grand_total)),4)) %>% 
+  mutate (comm_market_share=round((comm_grand_total/sum(comm_grand_total)),4)) %>%
+  mutate (total_market_share=round((total_grand_total/sum(total_grand_total)),4))
+  
+```
+
+lets visualize
+
+
+```{r}
+library(ggplot2)
+ggplot(market_shares, 
+       aes(x=total_market_share,
+           y=comm_market_share, color=brand_name
+           )) +
+      geom_point() +
+      
+      expand_limits(x=0)
+      
+    
+
+
 ```
 
