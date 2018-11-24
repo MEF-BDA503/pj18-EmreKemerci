@@ -1,11 +1,16 @@
 ##### [Homepage](https://emrekemerci.github.io/EmreKemerci/)			
 ##### [Course Homepage](https://mef-bda503.github.io/)	
+## Week5 (Nov 28, 2018)
+...
+
+***
 ## Week4 (Nov 14, 2018)
-Shiny package was exercised this week. Besides, we gave a start to our group term project.   
+Shiny package was exercised this week. Besides, we gave a start to our group term project.
+As homework, we make some anaylsis on aggreageted ODD data. [Assignment4](AssignmentWeek4/AssignmentWeek4.html)
 
 ***
 ## Week3 (Oct 31, 2018)
-This week we reviewed ggplot & lubridate packages and as ODD homework part 2, in order to aggregate monthly ODD datas, we merged our code to main file. 
+This week we reviewed ggplot & lubridate packages and as ODD homework part 2, in order to aggregate monthly ODD datas, we merged our code to main file. [Assignment3](AssignmentWeek3/AssignmentWeek3.Rmd)
 
 ***
 ## Week2 (Oct 17, 2018)
