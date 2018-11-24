@@ -5,10 +5,11 @@ date: "November 20, 2018"
 output: html_document
 ---
 
-```{r}
+```{r, warning=FALSE}
 library(tidyverse)
 ```
 
+To read the aggregated ODD sales data for the monthly periods between Jan 2016 - Sep 2018.
 
 ```{r, warning=FALSE}
 data<-readRDS(file = "C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/AssignmentWeek4/car_data_aggregate.rds")
@@ -18,12 +19,13 @@ data<-readRDS(file = "C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalyt
 first, take a glance at variables
 
 ```{r}
-data %>% str()
+data %>% glimpse()
 
-UniqueBrandNames<-data %>% distinct(brand_name)
-UniqueYear<-data %>% distinct(year)
-UniqueMonth<-data %>% distinct(month)
-list(c(UniqueBrandNames,UniqueMonth, UniqueYear))
+data %>% distinct(brand_name)
+data %>% distinct(year)
+data %>% distinct(month)
+
+
 ```
 
 Month and Year variables have appropriate values but brand_names variable needs cleaning since there are "TOPLAM:" and "ODD, verilerinde..." values. Also, brand_name has values "Aston MARTÝN and Aston MARTIN", we can replace "Aston MARTÝN"" with "Aston MARTIN". 
@@ -38,7 +40,7 @@ data <- data %>%
 
 ```
 
-I want to analyse market shares of each brand for auto sales, commercial vehicle sales and total sales.
+I want to analyse market shares over sales between 2016-2018/9 of each brand for auto sales, commercial vehicle sales and total sales.
 
 ```{r}
 market_shares <- data %>%
@@ -47,23 +49,67 @@ market_shares <- data %>%
   mutate(auto_market_share=round((auto_grand_total/sum(auto_grand_total)),4)) %>% 
   mutate (comm_market_share=round((comm_grand_total/sum(comm_grand_total)),4)) %>%
   mutate (total_market_share=round((total_grand_total/sum(total_grand_total)),4))
+market_shares
   
 ```
 
-lets visualize
+```{r, warning=FALSE}
+market_shares_summary <- market_shares %>% select(brand_name, auto_market_share, comm_market_share)
 
+
+library(reshape2)
+  melt_summary <- melt(market_shares_summary, id=c("brand_name"))
+
+melt_summary
+
+
+```
+
+
+lets visualize
 
 ```{r}
 library(ggplot2)
-ggplot(market_shares, 
-       aes(x=total_market_share,
-           y=comm_market_share, color=brand_name
-           )) +
-      geom_point() +
-      
-      expand_limits(x=0)
-      
-    
+
+ggplot(melt_summary, aes(x=brand_name, y=value*100, fill=variable)) +
+    geom_bar(stat='identity', position= "dodge") +
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      theme(legend.position = c(0.7, 0.75)) + 
+        scale_y_continuous(sec.axis = sec_axis(~.,"Market Share (%)")) +
+        labs(x="Brand Name", y="Market Share (%)", title="Market share of each brand according to sales between Jan 2016 - Sep 2018", fill=guide_legend(title="Vehicle Type")) + 
+  scale_color_manual(name="Mileage", labels = c("Above Average", "Below Average")) +
+          theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid"))
+  
+
+        
+  
+```
+
+
+
+```{r}
+gr<-market_shares %>%
+  select(brand_name, total_market_share)
+
+gr$share_z <- round((gr$total_market_share - mean(gr$total_market_share))/sd(gr$total_market_share), 2)
+
+gr$marketshare_type <- ifelse(gr$share_z < 0, "below", "above")  
+gr <- gr[order(gr$share_z), ]
+gr$brand_name <- factor(gr$brand_name, levels = gr$brand_name)
+
+
+theme_set(theme_bw())
+
+ggplot(gr, aes(x=brand_name, y=share_z, label=share_z)) + 
+  geom_point(stat='identity', aes(col=marketshare_type), size=6)  +
+  scale_color_manual(name="Market Share", 
+                     labels = c("Above Average", "Below Average"), 
+                     values = c("above"="#00ba38", "below"="#f8766d")) + 
+  geom_text(color="white", size=2) +
+  labs(title="Diverging Dot Plot", 
+       subtitle="Normalized total market shares") + 
+  ylim(-2.5, 2.5) +
+  coord_flip()
 
 
 ```
