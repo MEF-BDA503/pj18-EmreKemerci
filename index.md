@@ -1,5 +1,14 @@
 ##### [Homepage](https://emrekemerci.github.io/EmreKemerci/)			
 ##### [Course Homepage](https://mef-bda503.github.io/)	
+## Week7 (Dec 26, 2018)
+Term Project Presentation. [Project Progress Journal](https://mef-bda503.github.io/gpj18-group_four/)
+
+
+***
+## Week6 (Dec 12, 2018)
+...
+
+***
 ## Week5 (Nov 28, 2018)
 ...
 
