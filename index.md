@@ -3,14 +3,13 @@
 ## Week7 (Dec 26, 2018)
 Term Project Presentation. [Project Progress Journal](https://mef-bda503.github.io/gpj18-group_four/)
 
-
 ***
 ## Week6 (Dec 12, 2018)
-...
+We continued with Statistical models; Linear Regression, Logistic Regression, KNN, Classification and Regression Trees (CART)
 
 ***
 ## Week5 (Nov 28, 2018)
-...
+Statistical models were introduced and Principle Components Analysis (PCA), Multidimensional Scaling (MDS), K-Means, Hierarchical Clustering were reviewed. 
 
 ***
 ## Week4 (Nov 14, 2018)
