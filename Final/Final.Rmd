@@ -171,3 +171,131 @@ I see this positive collerated pattern only for India but the other countries do
 
 ## Part 3
 
+```{r, include=FALSE}
+
+library(jsonlite)
+
+```
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2019_limit0_7216a250f6ae72c71cd09563798a9f18.json")
+
+
+jsonfile <- fromJSON(url) 
+
+data <- lapply(jsonfile[[1]], function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+})
+
+WUR_2019 <- as.data.frame(do.call("cbind", data))
+saveRDS(WUR_2019,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2019.rds")
+
+
+url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2018_limit0_369a9045a203e176392b9fb8f8c1cb2a.json")
+
+jsonfile <- fromJSON(url) 
+
+data <- lapply(jsonfile[[1]], function(x) {
+    x[sapply(x, is.null)] <- NA
+   unlist(x)
+})
+
+
+WUR_2018<- as.data.frame(do.call("cbind", data))
+
+saveRDS(WUR_2018,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2018.rds")
+
+
+
+
+url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2017_limit0_94aa8e595206a1cd1284e2808330a79c.json")
+
+jsonfile <- fromJSON(url) 
+
+data <- lapply(jsonfile[[1]], function(x) {
+    x[sapply(x, is.null)] <- NA
+   unlist(x)
+})
+
+
+WUR_2017<- as.data.frame(do.call("cbind", data))
+
+saveRDS(WUR_2017,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2017.rds")
+
+
+
+
+url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2016_limit0_a38b8fe86b742996f9ea3df4b4ca09f3.json")
+
+jsonfile <- fromJSON(url) 
+
+data <- lapply(jsonfile[[1]], function(x) {
+    x[sapply(x, is.null)] <- NA
+   unlist(x)
+})
+
+
+WUR_2016<- as.data.frame(do.call("cbind", data))
+
+saveRDS(WUR_2016,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2016.rds")
+
+
+url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2015_limit0_3b4a26d6f223d75c71def66929572393.json")
+
+jsonfile <- fromJSON(url) 
+
+data <- lapply(jsonfile[[1]], function(x) {
+    x[sapply(x, is.null)] <- NA
+   unlist(x)
+})
+
+
+WUR_2015<- as.data.frame(do.call("cbind", data))
+
+saveRDS(WUR_2015,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2015.rds")
+
+
+rm(url)
+rm(jsonfile)
+rm(data)
+```
+
+
+
+country averages of scores of teaching, research, citation, international outlook and industry income.
+
+I want to investigate how each university scores disperse per country    
+
+```{r, warning=FALSE, message=FALSE}
+wur <- readRDS("C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2019.rds")
+
+wur <- wur %>% select (name, location, scores_teaching, scores_research, scores_citations, scores_international_outlook, scores_industry_income) %>%
+  melt(id=c("name", "location")) 
+
+wur$value <- as.numeric(wur$value)
+
+wur <- wur %>% group_by(variable) %>% mutate(world_avr_score_per_score_type=mean(value))
+
+wur <- wur %>% group_by(location, variable) %>% mutate(location_avr_score_per_score_type=mean(value))
+
+wur <- wur %>% mutate(CountryGroup = ifelse(location_avr_score_per_score_type > world_avr_score_per_score_type, "AboveWorldAverage", "BelowWorldAverage"))
+
+#wurAboveMean <- wur %>% filter(location_avr_score_per_score_type > world_avr_score_per_score_type)
+#wurBelowMean <- wur %>% filter(location_avr_score_per_score_type < world_avr_score_per_score_type)
+
+ggplot(wur, aes(value)) +
+  geom_density(aes(fill=factor(variable)), alpha=0.8) +
+  facet_wrap(~CountryGroup)
+ 
+```
+
+```{r, message=FALSE, warning=FALSE}
+wur2 <- wur %>% filter(CountryGroup == "AboveWorldAverage")
+
+ggplot(wur2, aes(value)) +
+  geom_density(aes(fill=factor(variable)), alpha=0.8) +
+  facet_wrap(~location)
+
+```
+
