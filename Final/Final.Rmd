@@ -14,15 +14,17 @@ knitr::opts_chunk$set(echo = TRUE)
 I noted my insights for both languages below: 
 
 Python
-+ I have not enough experience but according to what I heard commonly, Python is more capable in modelling & machine learning
-+ I think syntax of Python is easier to read and write comparing the R.  R has disadvantage especially due to paranthesis 
-+ As far as I know, Python is preferred more among data analists/scientists
+
+* I have not enough experience but according to what I heard commonly, Python is more capable in modelling & machine learning
+* I think syntax of Python is easier to read and write comparing the R.  R has disadvantage especially due to paranthesis 
+* As far as I know, Python is preferred more among data analists/scientists
 
 R
-+ Better for charming visualisation
-+ Better reporting capabilities and customization opportunities with Markdown comparing Jupyter notebook
-+ R Studio looks more friendly for new starters comparing PyCharm
-+ My insights are that R have variety of libraries, on the other hand coming with consistency problems of the libraries
+
+* Better for charming visualisation
+* Better reporting capabilities and customization opportunities with Markdown comparing Jupyter notebook
+* R Studio looks more friendly for new starters comparing PyCharm
+* My insights are that R have variety of libraries, on the other hand coming with consistency problems of the libraries
 
 Opinions stated in the dataschool website commonly overlap with my thoughts but at the end of the day, both languages have advantages and disadavntages. So I think that a data scientist should have capabilities to an extend in both languages and should prefer the one better satisfing the need. 
 
@@ -39,12 +41,12 @@ I prefer to present what the data says but I must explain the results of the ana
 I prefer to draw average delay time according to carriers and origins of flight. I choose delay time instead of arrival time because intuitively we know that departure delays  are more than arrival delays. Carriers and the airports are key variables to analyze delay times, that is why I choose these variables.This plot can be used as starting point for following detailed analysis.
 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 library(nycflights13)
 library(ggplot2)
-glimpse(flights)
-summary(flights)
+#glimpse(flights)
+#summary(flights)
 ```
 
 ```{r}
@@ -61,5 +63,110 @@ ggplot (data=fl, aes(x=carrier, y=avrdelay)) +
 
 ## Part II
 
+I choose to extend our group term project analysis through comparing the YoY percentage change of total export and import values with change in value of currencies of each countries. The steps of my analysis are as follows:
+
+Loading the required libraries.
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(readxl)
+library(reshape2)
+```
+
+Reading our group project's cleaned the RDS files.
+
+```{r}
+githubURL_export <- ("https://github.com/MEF-BDA503/gpj18-group_four/blob/master/export_jTable.rds?raw=true")
+githubURL_import <- ("https://github.com/MEF-BDA503/gpj18-group_four/blob/master/import_jTable.rds?raw=true")
+githubURL_exportMELTED <- ("https://github.com/MEF-BDA503/gpj18-group_four/blob/master/export_jTableMELTED.rds?raw=true")
+githubURL_importMELTED <- ("https://github.com/MEF-BDA503/gpj18-group_four/blob/master/import_jTableMELTED.rds?raw=true")
+
+export_jTable<- readRDS(url(githubURL_export))
+import_jTable<- readRDS(url(githubURL_import))
+export_jTableMELTED<- readRDS(url(githubURL_exportMELTED))
+import_jTableMELTED<- readRDS(url(githubURL_importMELTED))
+
+rm(githubURL_export)
+rm(githubURL_import)
+rm(githubURL_exportMELTED)
+rm(githubURL_importMELTED)
+```
+
+I run the report on [TCMB Website](https://evds2.tcmb.gov.tr/index.php?/evds/serieMarket/#collapse_2) to gather closing FX rates of each year from 2013 to 2018 and save as Excel file. The I read this file and manipulated.
+
+```{r}
+Fxtable <- read_excel("C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/YoYchFX.xlsx", col_names=TRUE)
+
+Fxtable <- Fxtable %>% melt(id=c("year")) 
+
+colnames(Fxtable) <-  c("Year","Fx","FxYoYChg")
+
+```
+
+I also manipulated trade stat data of our porject
+
+```{r, message=FALSE, warning=FALSE}
+tableExport <- export_jTableMELTED %>% 
+  group_by(Country, year) %>%
+  summarise(totalExpV=sum(Values,na.rm=TRUE)) %>%
+  arrange(Country, year) %>%
+  mutate(ExpValChng = (totalExpV - lag(totalExpV))/lag(totalExpV)*100)
 
 
+tableImport <- import_jTableMELTED %>% 
+  group_by(Country, year) %>%
+  summarise(totalImpV=sum(Values,na.rm=TRUE)) %>%
+  arrange(Country, year) %>%
+  mutate(ImpValChng = (totalImpV - lag(totalImpV))/lag(totalImpV)*100)
+
+Tradetable <- full_join(tableExport,tableImport) %>%
+  select(Country, year, Export="ExpValChng", Import = "ImpValChng") %>%
+  melt(id=c("Country", "year")) %>%
+  filter(year!=2013)
+
+colnames(Tradetable) <-  c("Country","Year","TradeType","TradeYoYChg")
+
+Tradetable <- Tradetable %>% mutate(Fx = ifelse (Country =="Canada", "CAD",
+                                       ifelse(Country=="Russian", "RUB",
+                                        ifelse(Country=="China", "CNY",
+                                        ifelse(Country=="India", "INR",
+                                        ifelse(Country=="Japan", "JPY",
+                                        ifelse(Country=="UK", "GBP",
+                                        ifelse(Country=="USA", "USD", "EUR"))))))))
+
+
+
+Tradetable <- transform(Tradetable, Year = as.numeric(Year))
+
+```
+
+And join the trade stat data with FX data.
+
+```{r, message=FALSE, warning=FALSE}
+df <- left_join(Tradetable,Fxtable) 
+
+df <- df %>% select (Country, Fx, Year, FxYoYChg, TradeType, TradeYoYChg) %>%
+  dcast(Country+Fx+Year+FxYoYChg~TradeType)
+         
+colnames(df) <-  c("Country", "Fx", "Year", "FxYoYChg", "ExYoYChg","ImYoYChg")
+```
+
+And visualized change in export value, change in import value and change of each countries' FX rate over years according to trade partner countries.
+
+```{r}
+ggplot(df, aes(x=Year)) + 
+  geom_line(aes(y=FxYoYChg, col="FxYoYChg")) + 
+  geom_line(aes(y=ExYoYChg, col="ExYoYChg")) +
+  geom_line(aes(y=ImYoYChg, col="ImYoYChg")) +
+  facet_wrap(~Country) + 
+  labs(subtitle="YoY Changes for Export, Import and FX Rates", 
+      y="% Change")
+```
+
+Normally, I expect that in times TL depreciated against each countries currencies (hike in green line), export to these countries rises while imports declines.
+
+I see this positive collerated pattern only for India but the other countries do not support this thesis. So, change of FX rate with countries does not enough to explain changes in export and import values.  
+
+
+## Part 3
