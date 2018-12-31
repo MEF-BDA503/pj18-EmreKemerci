@@ -45,8 +45,6 @@ I prefer to draw average delay time according to carriers and origins of flight.
 library(dplyr)
 library(nycflights13)
 library(ggplot2)
-#glimpse(flights)
-#summary(flights)
 ```
 
 ```{r}
@@ -54,7 +52,6 @@ fl <- flights %>%
   select(dep_delay, carrier, origin) %>%
   group_by(carrier,origin) %>% 
   summarize(avrdelay=mean(dep_delay, na.rm=TRUE))
-
 
 ggplot (data=fl, aes(x=carrier, y=avrdelay)) +
   geom_bar(stat='identity', aes(fill=origin)) +
@@ -93,15 +90,12 @@ rm(githubURL_exportMELTED)
 rm(githubURL_importMELTED)
 ```
 
-I run the report on [TCMB Website](https://evds2.tcmb.gov.tr/index.php?/evds/serieMarket/#collapse_2) to gather closing FX rates of each year from 2013 to 2018 and save as Excel file. The I read this file and manipulated.
+I run the report on [TCMB Website](https://evds2.tcmb.gov.tr/index.php?/evds/serieMarket/#collapse_2) to gather closing FX rates of each year from 2013 to 2018 and save as Excel file. Then I read this file and manipulated.
 
 ```{r}
 Fxtable <- read_excel("C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/YoYchFX.xlsx", col_names=TRUE)
-
 Fxtable <- Fxtable %>% melt(id=c("year")) 
-
 colnames(Fxtable) <-  c("Year","Fx","FxYoYChg")
-
 ```
 
 I also manipulated trade stat data of our porject
@@ -112,7 +106,6 @@ tableExport <- export_jTableMELTED %>%
   summarise(totalExpV=sum(Values,na.rm=TRUE)) %>%
   arrange(Country, year) %>%
   mutate(ExpValChng = (totalExpV - lag(totalExpV))/lag(totalExpV)*100)
-
 
 tableImport <- import_jTableMELTED %>% 
   group_by(Country, year) %>%
@@ -135,10 +128,7 @@ Tradetable <- Tradetable %>% mutate(Fx = ifelse (Country =="Canada", "CAD",
                                         ifelse(Country=="UK", "GBP",
                                         ifelse(Country=="USA", "USD", "EUR"))))))))
 
-
-
 Tradetable <- transform(Tradetable, Year = as.numeric(Year))
-
 ```
 
 And join the trade stat data with FX data.
@@ -168,106 +158,27 @@ Normally, I expect that in times TL depreciated against each countries currencie
 
 I see this positive collerated pattern only for India but the other countries do not support this thesis. So, change of FX rate with countries does not enough to explain changes in export and import values.  
 
+## Part III
 
-## Part 3
-
-```{r, include=FALSE}
-
+```{r, warning=FALSE, message=FALSE}
 library(jsonlite)
-
-```
-
-```{r, include=FALSE, warning=FALSE, message=FALSE}
 url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2019_limit0_7216a250f6ae72c71cd09563798a9f18.json")
 
-
 jsonfile <- fromJSON(url) 
+WUR_2019 <- jsonfile[[1]]
 
-data <- lapply(jsonfile[[1]], function(x) {
-    x[sapply(x, is.null)] <- NA
-    unlist(x)
-})
-
-WUR_2019 <- as.data.frame(do.call("cbind", data))
 saveRDS(WUR_2019,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2019.rds")
-
-
-url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2018_limit0_369a9045a203e176392b9fb8f8c1cb2a.json")
-
-jsonfile <- fromJSON(url) 
-
-data <- lapply(jsonfile[[1]], function(x) {
-    x[sapply(x, is.null)] <- NA
-   unlist(x)
-})
-
-
-WUR_2018<- as.data.frame(do.call("cbind", data))
-
-saveRDS(WUR_2018,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2018.rds")
-
-
-
-
-url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2017_limit0_94aa8e595206a1cd1284e2808330a79c.json")
-
-jsonfile <- fromJSON(url) 
-
-data <- lapply(jsonfile[[1]], function(x) {
-    x[sapply(x, is.null)] <- NA
-   unlist(x)
-})
-
-
-WUR_2017<- as.data.frame(do.call("cbind", data))
-
-saveRDS(WUR_2017,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2017.rds")
-
-
-
-
-url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2016_limit0_a38b8fe86b742996f9ea3df4b4ca09f3.json")
-
-jsonfile <- fromJSON(url) 
-
-data <- lapply(jsonfile[[1]], function(x) {
-    x[sapply(x, is.null)] <- NA
-   unlist(x)
-})
-
-
-WUR_2016<- as.data.frame(do.call("cbind", data))
-
-saveRDS(WUR_2016,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2016.rds")
-
-
-url <- ("https://www.timeshighereducation.com/sites/default/files/the_data_rankings/world_university_rankings_2015_limit0_3b4a26d6f223d75c71def66929572393.json")
-
-jsonfile <- fromJSON(url) 
-
-data <- lapply(jsonfile[[1]], function(x) {
-    x[sapply(x, is.null)] <- NA
-   unlist(x)
-})
-
-
-WUR_2015<- as.data.frame(do.call("cbind", data))
-
-saveRDS(WUR_2015,file="C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2015.rds")
-
 
 rm(url)
 rm(jsonfile)
 rm(data)
 ```
 
+I want to found out the universities which has high scores although their countries are not successful considering the average scores of all universities in this country.The data is extracted from timeshighereducation website and shows the 2019 survey.
 
+First, I calculate world average score for each score type and average scores of each country per score type. Then I marked the countries as "Above Average" or "Below Average" considering whether each of their scores is above or below world average (per each score type).       
 
-country averages of scores of teaching, research, citation, international outlook and industry income.
-
-I want to investigate how each university scores disperse per country    
-
-```{r, warning=FALSE, message=FALSE}
+```{r, warning=FALSE, message=FALSE, fig.height=3, fig.width=6}
 wur <- readRDS("C:/Users/emrek/Google Drive/BDA/503-EssentialsOfDataAnalytics/GitHub/pj18-EmreKemerci/Final/WUR_2019.rds")
 
 wur <- wur %>% select (name, location, scores_teaching, scores_research, scores_citations, scores_international_outlook, scores_industry_income) %>%
@@ -276,26 +187,61 @@ wur <- wur %>% select (name, location, scores_teaching, scores_research, scores_
 wur$value <- as.numeric(wur$value)
 
 wur <- wur %>% group_by(variable) %>% mutate(world_avr_score_per_score_type=mean(value))
-
 wur <- wur %>% group_by(location, variable) %>% mutate(location_avr_score_per_score_type=mean(value))
-
 wur <- wur %>% mutate(CountryGroup = ifelse(location_avr_score_per_score_type > world_avr_score_per_score_type, "AboveWorldAverage", "BelowWorldAverage"))
-
-#wurAboveMean <- wur %>% filter(location_avr_score_per_score_type > world_avr_score_per_score_type)
-#wurBelowMean <- wur %>% filter(location_avr_score_per_score_type < world_avr_score_per_score_type)
 
 ggplot(wur, aes(value)) +
   geom_density(aes(fill=factor(variable)), alpha=0.8) +
   facet_wrap(~CountryGroup)
  
 ```
+As seen above; "above world average"" group's scores spreads in a wide range although they are tighten in low scores for "below world average" group. Since I want to find the universities diverging their countries, I focus to find the universities in right tail of "below world average" group density graph. 
 
-```{r, message=FALSE, warning=FALSE}
-wur2 <- wur %>% filter(CountryGroup == "AboveWorldAverage")
+To do this, I filtered "below world average" countries, then filtered top universities in each score type for each country. And visulazied as follows:  
 
-ggplot(wur2, aes(value)) +
-  geom_density(aes(fill=factor(variable)), alpha=0.8) +
-  facet_wrap(~location)
+```{r, message=FALSE, warning=FALSE, fig.height=4, fig.width=10}
+wur2 <- wur %>% filter(CountryGroup=="BelowWorldAverage")
 
+wur2 <- wur2 %>% select (name, location, variable, value, location_avr_score_per_score_type)
+
+wur2 <- wur2 %>% group_by(location, variable) %>% top_n(value, n=1)
+
+wur_teaching <- wur2 %>% filter(variable=="scores_teaching")
+wur_research <- wur2 %>% filter(variable=="scores_research")
+wur_citations <- wur2 %>% filter(variable=="scores_citations")
+wur_outlook <- wur2 %>% filter(variable=="scores_international_outlook")
+wur_income <- wur2 %>% filter(variable=="scores_industry_income")
+
+ggplot(wur_teaching, aes(x=substr(name, start = 1, stop = 30))) + 
+  geom_point(aes(y=value, color=value)) +
+  theme(axis.text.x = element_text(size=8, angle = 90)) +
+  labs(title="Top Universities from the Group of Below Average Countries", subtitle="According to Teaching Score", x="UniversityName", y="Score")
+
+ggplot(wur_research, aes(x=substr(name, start = 1, stop = 30))) + 
+  geom_point(aes(y=value, color=value)) +
+  theme(axis.text.x = element_text(size=8, angle = 90)) +
+  labs(title="Top Universities from the Group of Below Average Countries", subtitle="According to Research Score", x="UniversityName", y="Score")
+
+ggplot(wur_citations, aes(x=substr(name, start = 1, stop = 30))) + 
+  geom_point(aes(y=value, color=value)) +
+  theme(axis.text.x = element_text(size=8, angle = 90)) +
+  labs(title="Top Universities from the Group of Below Average Countries", subtitle="According to Citations Score", x="UniversityName", y="Score")
+
+ggplot(wur_outlook, aes(x=substr(name, start = 1, stop = 30))) + 
+  geom_point(aes(y=value, color=value)) +
+  theme(axis.text.x = element_text(size=8, angle = 90)) +
+  labs(title="Top Universities from the Group of Below Average Countries", subtitle="According to International Outlook Score", x="UniversityName", y="Score")
+
+ggplot(wur_income, aes(x=substr(name, start = 1, stop = 30))) + 
+  geom_point(aes(y=value, color=value)) +
+  theme(axis.text.x = element_text(size=8, angle = 90)) +
+  labs(title="Top Universities from the Group of Below Average Countries", subtitle="According to Industry Income Score", x="UniversityName", y="Score")
 ```
 
+the universities which has high scores although their countries are not successful considering the average scores of all universities in this country are:
+
+* University of Tokyo in "Teaching Score"" although Japan is below the world average in teaching score.
+* Tsinghua University in "Research Score" although China is below the world average in research score.
+* Babol Noshirvani University in "Citation Score" although Iran is below the world average in citation score.
+* Massachusetts Inst. of Tech in "International Outlook Score" although USA is below the world average in international outlook score.
+* Duke University in "Industry Income Score" although USA is below the world average in international outlook score.
