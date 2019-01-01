@@ -1,5 +1,9 @@
 ##### [Homepage](https://emrekemerci.github.io/EmreKemerci/)			
 ##### [Course Homepage](https://mef-bda503.github.io/)	
+## Final Exam (Dec 26, 2018)
+[Final Exam](Final/FinalExam.pdf) and [My Paper]()
+
+***
 ## Week7 (Dec 26, 2018)
 Term Project Presentation. [Project Progress Journal](https://mef-bda503.github.io/gpj18-group_four/)
 
